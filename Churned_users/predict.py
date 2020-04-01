@@ -56,7 +56,6 @@ plot_ROC_curve(classifier=model,
                X=X_test,
                y=y_test.values,
                n_folds=3)
-plt.show()
 
 # Предсказание на тестовом датасете
 predict_churned_users = model.predict(test_new)
