@@ -1,4 +1,4 @@
-import xgboost as xgb
+import lightgbm as lgb
 import warnings
 from sklearn.metrics import precision_score, recall_score, f1_score, log_loss, roc_auc_score
 
@@ -12,6 +12,7 @@ def evaluation(y_true, y_pred, y_prob):
     f1 = f1_score(y_true=y_true, y_pred=y_pred)
     ll = log_loss(y_true=y_true, y_pred=y_prob)
     roc_auc = roc_auc_score(y_true=y_true, y_score=y_prob)
+    print('Метрики модели:')
     print('Precision: {}'.format(precision))
     print('Recall: {}'.format(recall))
     print('F1: {}'.format(f1))
@@ -21,19 +22,18 @@ def evaluation(y_true, y_pred, y_prob):
 
 
 # Функция обучения модели и ее предсказания
-def xgb_fit_predict(X_train, y_train, X_test, y_test):
-    clf = xgb.XGBClassifier(max_depth=3,
-                            n_estimators=100,
-                            learning_rate=0.1,
-                            nthread=4,
-                            subsample=1.,
-                            colsample_bytree=0.5,
-                            min_child_weight=3,
-                            reg_alpha=0.,
-                            reg_lambda=0.,
-                            seed=42,
-                            missing=1e10)
-
+def lgb_fit_predict(X_train, y_train, X_test, y_test):
+    clf = lgb.LGBMClassifier(max_depth=4,
+                             n_estimators=550,
+                             learning_rate=0.01,
+                             n_jobs=-1,
+                             subsample=1.,
+                             colsample_bytree=0.5,
+                             min_child_weight=3,
+                             reg_alpha=0.,
+                             reg_lambda=0.,
+                             seed=42)
+    print('Обучение модели...')
     clf.fit(X_train, y_train, eval_metric='aucpr', verbose=10)
     predict_proba_test = clf.predict_proba(X_test)
     predict_test = clf.predict(X_test)

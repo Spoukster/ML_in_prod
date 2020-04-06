@@ -2,8 +2,14 @@ import pandas as pd
 import time
 from datetime import datetime, timedelta
 
-# Отобразим все колонки
-pd.set_option('display.max_columns', None)
+CHURNED_START_DATE = '2019-09-01'
+CHURNED_END_DATE = '2019-10-01'
+
+INTER_1 = (1, 7)
+INTER_2 = (8, 14)
+INTER_3 = (15, 21)
+INTER_4 = (22, 28)
+INTER_LIST = [INTER_1, INTER_2, INTER_3, INTER_4]
 
 
 def time_format(sec):
@@ -13,8 +19,8 @@ def time_format(sec):
 def build_dataset_raw(churned_start_date='2019-01-01',
                       churned_end_date='2019-02-01',
                       inter_list=[(1, 7), (8, 14)],
-                      raw_data_path='train/',
-                      dataset_path='dataset/',
+                      raw_data_path='../train/',
+                      dataset_path='../dataset/',
                       mode='train'):
     start_t = time.time()
 
@@ -67,7 +73,24 @@ def build_dataset_raw(churned_start_date='2019-01-01',
 
     # Добавляем "статические" признаки
     dataset = pd.merge(dataset, profiles, on='user_id')
-    # ---------------------------------------------------------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------------------------------------------
     dataset.to_csv('{}dataset_raw_{}.csv'.format(dataset_path, mode), sep=';', index=False)
     print('Dataset is successfully built and saved to {}, run time "build_dataset_raw": {}'. \
           format(dataset_path, time_format(time.time() - start_t)))
+
+
+# Создадим тренировочный датасет
+build_dataset_raw(churned_start_date=CHURNED_START_DATE,
+                  churned_end_date=CHURNED_END_DATE,
+                  inter_list=INTER_LIST,
+                  raw_data_path='../train/',
+                  dataset_path='../dataset/',
+                  mode='train')
+
+# Создадим тестовый датасет
+build_dataset_raw(churned_start_date=CHURNED_START_DATE,
+                  churned_end_date=CHURNED_END_DATE,
+                  inter_list=INTER_LIST,
+                  raw_data_path='../test/',
+                  dataset_path='../dataset/',
+                  mode='test')
