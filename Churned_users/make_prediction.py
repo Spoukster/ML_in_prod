@@ -1,5 +1,6 @@
 from dataset_processing import prepare_dataset, class_balancing
 from model_fit import lgb_fit_predict
+from sklearn.preprocessing import MinMaxScaler
 
 import pandas as pd
 
@@ -32,7 +33,9 @@ model = lgb_fit_predict(X_train_balanced, y_train_balanced, X_test, y_test)
 user_id = test_new['user_id']
 test_new = test_new.drop(['user_id'], axis=1)
 
-predict_churned_users = model.predict(test_new)
+test_mm = MinMaxScaler().fit_transform(test_new)
+
+predict_churned_users = model.predict(test_mm)
 submissions = pd.concat([user_id, pd.Series(predict_churned_users)], axis=1)
 submissions = submissions.rename(columns={0: 'is_churned'})
 submissions.to_csv('../result/Yuriy_Ryabinin_churned_users.csv', sep=';', index=None)
