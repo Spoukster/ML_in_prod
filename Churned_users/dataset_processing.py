@@ -50,7 +50,8 @@ def class_balancing(dataset):
     y = dataset['is_churned']
 
     # Нормализация данных
-    X_mm = MinMaxScaler().fit_transform(X)
+    mms = MinMaxScaler()
+    X_mm = mms.fit_transform(X)
 
     X_train, X_test, y_train, y_test = train_test_split(X_mm,
                                                         y,
@@ -66,4 +67,4 @@ def class_balancing(dataset):
     print('До:', Counter(y_train))
     print('После:', Counter(y_train_balanced))
 
-    return X_train_balanced, y_train_balanced, X_test, y_test
+    return X_train_balanced, y_train_balanced, X_test, y_test, mms
